@@ -1,3 +1,23 @@
+# Orchard v4
+
+## Setup
+
+Required environment variables:
+
+```
+TURSO_DATABASE_URL=...
+TURSO_AUTH_TOKEN=...
+CLERK_SECRET_KEY=...
+CLERK_PUBLISHABLE_KEY=...
+CLERK_WEBHOOK_SECRET=...
+```
+
+## Database
+
+- Generate migrations: `npx drizzle-kit generate`
+- Push to DB: `npx drizzle-kit push`
+- Seed sample data: `npm run seed`
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
