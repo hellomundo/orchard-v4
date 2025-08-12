@@ -8,14 +8,14 @@ import { eq } from 'drizzle-orm';
 // PUT /api/admin/school-years/[id] - Update school year settings
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getCurrentUserRecord();
   if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const body = await request.json();

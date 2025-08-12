@@ -1,182 +1,205 @@
 import { getCurrentSchoolYear } from '@/lib/schoolYear';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
+import { 
+  CalendarDays, 
+  Tag, 
+  Users, 
+  UserCheck, 
+  CheckCircle, 
+  AlertCircle,
+  Calendar,
+  Settings
+} from 'lucide-react';
 
 export default async function AdminDashboard() {
   const currentSchoolYear = await getCurrentSchoolYear();
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-2 text-sm text-gray-600">
+    <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-lg text-muted-foreground">
           Manage volunteer hours system for elementary school families
         </p>
       </div>
 
       {currentSchoolYear ? (
-        <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
-                Current School Year: {currentSchoolYear.name}
-              </h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>Required Hours: {currentSchoolYear.requiredHours}</p>
-                <p>Penalty Rate: ${currentSchoolYear.hourlyRate}/hour</p>
-                <p>Period: {new Date(currentSchoolYear.startDate).toLocaleDateString()} - {new Date(currentSchoolYear.endDate).toLocaleDateString()}</p>
+        <Alert className="border-blue-200 bg-blue-50">
+          <CheckCircle className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                  {currentSchoolYear.name}
+                </Badge>
+                <span className="font-medium">Active School Year</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Required Hours:</span> {currentSchoolYear.requiredHours}
+                </div>
+                <div>
+                  <span className="font-medium">Penalty Rate:</span> ${currentSchoolYear.hourlyRate}/hour
+                </div>
+                <div>
+                  <span className="font-medium">Period:</span> {new Date(currentSchoolYear.startDate).toLocaleDateString()} - {new Date(currentSchoolYear.endDate).toLocaleDateString()}
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </AlertDescription>
+        </Alert>
       ) : (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
+        <Alert className="border-amber-200 bg-amber-50">
+          <AlertCircle className="h-4 w-4 text-amber-600" />
+          <AlertDescription className="text-amber-800">
+            <div className="space-y-2">
+              <h3 className="font-medium">No Active School Year</h3>
+              <p>Please create and activate a school year to begin tracking volunteer hours.</p>
+              <Button asChild size="sm" className="mt-2">
+                <Link href="/admin/school-years">Set up school year</Link>
+              </Button>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">
-                No Active School Year
-              </h3>
-              <div className="mt-2 text-sm text-yellow-700">
-                <p>Please create and activate a school year to begin tracking volunteer hours.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          </AlertDescription>
+        </Alert>
       )}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    School Years
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    Manage academic years and settings
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm">
-              <a href="/admin/school-years" className="font-medium text-cyan-700 hover:text-cyan-900">
-                View school years →
-              </a>
-            </div>
-          </div>
-        </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">School Years</CardTitle>
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-xs mb-4">
+              Manage academic years and settings
+            </CardDescription>
+            <Button asChild variant="outline" size="sm" className="w-full">
+              <Link href="/admin/school-years">
+                <Calendar className="h-4 w-4 mr-2" />
+                Manage Years
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a2 2 0 012-2z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Task Categories
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    Manage volunteer task types
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm">
-              <a href="/admin/categories" className="font-medium text-cyan-700 hover:text-cyan-900">
-                View categories →
-              </a>
-            </div>
-          </div>
-        </div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Task Categories</CardTitle>
+            <Tag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-xs mb-4">
+              Manage volunteer task types
+            </CardDescription>
+            <Button asChild variant="outline" size="sm" className="w-full">
+              <Link href="/admin/categories">
+                <Settings className="h-4 w-4 mr-2" />
+                Manage Categories
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Families
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    Manage family accounts
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-          <div className="bg-gray-50 px-5 py-3">
-            <div className="text-sm">
-              <a href="/admin/families" className="font-medium text-cyan-700 hover:text-cyan-900">
-                View families →
-              </a>
-            </div>
-          </div>
-        </div>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Families</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-xs mb-4">
+              Manage family accounts
+            </CardDescription>
+            <Button asChild variant="outline" size="sm" className="w-full">
+              <Link href="/admin/families">
+                <Users className="h-4 w-4 mr-2" />
+                Manage Families
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Users</CardTitle>
+            <UserCheck className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <CardDescription className="text-xs mb-4">
+              Manage user accounts
+            </CardDescription>
+            <Button asChild variant="outline" size="sm" className="w-full">
+              <Link href="/admin/users">
+                <UserCheck className="h-4 w-4 mr-2" />
+                Manage Users
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-lg leading-6 font-medium text-gray-900 mb-4">Quick Actions</h2>
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <div className="sm:flex sm:items-start sm:justify-between">
-              <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  System Setup
-                </h3>
-                <div className="mt-2 max-w-xl text-sm text-gray-500">
-                  <p>Complete these steps to set up the volunteer hour management system.</p>
-                </div>
-              </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            System Setup
+          </CardTitle>
+          <CardDescription>
+            Complete these steps to set up the volunteer hour management system.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              {currentSchoolYear ? (
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              ) : (
+                <div className="h-4 w-4 rounded-full border-2 border-muted" />
+              )}
+              <span className={currentSchoolYear ? 'text-green-600 font-medium' : ''}>
+                Create and activate a school year
+              </span>
             </div>
-            <div className="mt-5">
-              <div className="rounded-md bg-gray-50 px-6 py-5 sm:flex sm:items-start sm:justify-between">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 sm:mt-0 sm:ml-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      Setup Checklist:
-                    </div>
-                    <ul className="mt-2 text-sm text-gray-500 list-disc list-inside">
-                      <li className={currentSchoolYear ? 'text-green-600' : ''}>
-                        {currentSchoolYear ? '✓ ' : '• '}Create and activate a school year
-                      </li>
-                      <li>• Set up task categories for volunteer activities</li>
-                      <li>• Create family accounts and invite users</li>
-                      <li>• Configure penalty rates and hour requirements</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full border-2 border-muted" />
+              <span>Set up task categories for volunteer activities</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full border-2 border-muted" />
+              <span>Create family accounts for school families</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full border-2 border-muted" />
+              <span>Assign users to families and manage permissions</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full border-2 border-muted" />
+              <span>Configure penalty rates and hour requirements</span>
             </div>
           </div>
-        </div>
-      </div>
+          
+          <Separator />
+          
+          <div className="flex gap-2 flex-wrap">
+            <Button asChild size="sm" variant="secondary">
+              <Link href="/admin/school-years">School Years</Link>
+            </Button>
+            <Button asChild size="sm" variant="secondary">
+              <Link href="/admin/categories">Categories</Link>
+            </Button>
+            <Button asChild size="sm" variant="secondary">
+              <Link href="/admin/families">Families</Link>
+            </Button>
+            <Button asChild size="sm" variant="secondary">
+              <Link href="/admin/users">Users</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

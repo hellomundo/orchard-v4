@@ -32,7 +32,7 @@ export async function POST() {
     
     // If user doesn't exist, create it first
     try {
-      const clerkUser = await clerkClient.users.getUser(userId);
+      const clerkUser = await (await clerkClient()).users.getUser(userId);
       const email = clerkUser.emailAddresses[0]?.emailAddress || `${userId}@unknown.com`;
       
       const now = Date.now();

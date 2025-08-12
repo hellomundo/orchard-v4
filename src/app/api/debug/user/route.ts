@@ -10,7 +10,7 @@ export async function GET() {
     let clerkUserInfo = null;
     if (userId) {
       try {
-        const clerkUser = await clerkClient.users.getUser(userId);
+        const clerkUser = await (await clerkClient()).users.getUser(userId);
         clerkUserInfo = {
           id: clerkUser.id,
           email: clerkUser.emailAddresses[0]?.emailAddress || 'No email',

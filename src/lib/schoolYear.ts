@@ -13,9 +13,11 @@ export async function getCurrentSchoolYear(): Promise<SchoolYear | null> {
     return currentSchoolYearCache;
   }
 
-  const result = await db.query.schoolYears.findFirst({
-    where: eq(schoolYears.isActive, true),
-  });
+  const result = await db
+    .select()
+    .from(schoolYears)
+    .where(eq(schoolYears.isActive, true))
+    .get();
 
   currentSchoolYearCache = result ?? null;
   cacheExpiry = now + 60 * 60 * 1000; // 1 hour

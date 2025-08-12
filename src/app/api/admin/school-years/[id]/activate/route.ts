@@ -3,20 +3,20 @@ import { db } from '@/db/client';
 import { schoolYears, familyYearStatus, families } from '@/db/schema';
 import { getCurrentUserRecord } from '@/lib/auth';
 import { clearSchoolYearCache } from '@/lib/schoolYear';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { randomUUID } from 'node:crypto';
 
 // PUT /api/admin/school-years/[id]/activate - Set school year as active and create family year status records
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getCurrentUserRecord();
   if (!user || user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   try {
     await db.transaction(async (tx) => {
@@ -38,7 +38,7 @@ export async function PUT(
       const activeFamilies = await tx
         .select()
         .from(families)
-        .where(eq(families.archivedAt, null));
+        .where(isNull(families.archivedAt));
 
       const now = Date.now();
       for (const family of activeFamilies) {
