@@ -7,6 +7,7 @@ import {
   families,
   familyYearStatus,
 } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 async function main() {
 
@@ -20,9 +21,18 @@ async function main() {
     .values({ id: adminId, email: adminEmail, role: 'admin', createdAt: now, updatedAt: now })
     .onConflictDoUpdate({ target: users.id, set: { email: adminEmail, updatedAt: now } });
 
-  // Create a sample family
-  const familyId = randomUUID();
-  await db.insert(families).values({ id: familyId, name: 'Sample Family', createdAt: now, updatedAt: now }).onConflictDoNothing();
+  // Create a sample family (or get existing one)
+  let familyId: string;
+  const existingFamily = await db.select().from(families).where(eq(families.name, 'Sample Family')).limit(1);
+  
+  if (existingFamily.length > 0) {
+    familyId = existingFamily[0].id;
+    console.log('Using existing Sample Family');
+  } else {
+    familyId = randomUUID();
+    await db.insert(families).values({ id: familyId, name: 'Sample Family', createdAt: now, updatedAt: now });
+    console.log('Created new Sample Family');
+  }
 
   // School year 2024-2025 active
   const syId = '2024-2025';
@@ -43,17 +53,32 @@ async function main() {
   // Task categories
   const cats = ['Classroom Help', 'Event Setup', 'Fundraising'];
   for (const name of cats) {
-    await db
-      .insert(taskCategories)
-      .values({ id: randomUUID(), name, isActive: true, createdAt: now })
-      .onConflictDoNothing();
+    const existing = await db.select().from(taskCategories).where(eq(taskCategories.name, name)).limit(1);
+    if (existing.length === 0) {
+      await db
+        .insert(taskCategories)
+        .values({ id: randomUUID(), name, isActive: true, createdAt: now });
+      console.log(`Created category: ${name}`);
+    } else {
+      console.log(`Category already exists: ${name}`);
+    }
   }
 
   // Family year status
-  await db
-    .insert(familyYearStatus)
-    .values({ id: randomUUID(), familyId, schoolYearId: syId, isActive: true, totalHours: 0, createdAt: now })
-    .onConflictDoNothing();
+  const existingFamilyYear = await db
+    .select()
+    .from(familyYearStatus)
+    .where(eq(familyYearStatus.familyId, familyId))
+    .limit(1);
+    
+  if (existingFamilyYear.length === 0) {
+    await db
+      .insert(familyYearStatus)
+      .values({ id: randomUUID(), familyId, schoolYearId: syId, isActive: true, totalHours: 0, createdAt: now });
+    console.log('Created family year status');
+  } else {
+    console.log('Family year status already exists');
+  }
 
   console.log('Seed complete');
 }

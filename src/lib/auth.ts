@@ -6,8 +6,14 @@ import { eq } from 'drizzle-orm';
 export async function getCurrentUserRecord() {
   const { userId } = await auth();
   if (!userId) return null;
-  const record = await db.query.users.findFirst({ where: eq(users.id, userId) });
-  return record ?? null;
+  
+  const record = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+    
+  return record[0] ?? null;
 }
 
 

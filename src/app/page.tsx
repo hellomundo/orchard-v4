@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getCurrentSchoolYear } from "@/lib/schoolYear";
 import { getCurrentUserRecord } from "@/lib/auth";
 import Link from "next/link";
+import FakeParentButton from "@/components/FakeParentButton";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -60,6 +61,16 @@ export default async function Home() {
                     Debug Access (Dev)
                   </Link>
                 </div>
+                
+                {/* Debug Tools */}
+                {userId && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Debug Tools</h4>
+                    <div className="space-y-2">
+                      <FakeParentButton />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
