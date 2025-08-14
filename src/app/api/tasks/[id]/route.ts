@@ -8,7 +8,7 @@ import { eq, and } from 'drizzle-orm';
 // PUT /api/tasks/[id] - Edit own task
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getCurrentUserRecord();
   if (!user || user.role !== 'parent') {
@@ -21,7 +21,7 @@ export async function PUT(
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { hours, date, categoryId, description } = body;
 
@@ -133,7 +133,7 @@ export async function PUT(
 // DELETE /api/tasks/[id] - Delete own task
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getCurrentUserRecord();
   if (!user || user.role !== 'parent') {
@@ -146,7 +146,7 @@ export async function DELETE(
   }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Verify the task exists and belongs to the current user
     const existingTask = await db

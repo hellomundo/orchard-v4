@@ -35,7 +35,7 @@ interface Task {
   };
 }
 
-export default function EditTaskPage({ params }: { params: { id: string } }) {
+export default function EditTaskPage({ params }: { params: Promise<{ id: string }> }) {
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,6 +43,7 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [taskId, setTaskId] = useState<string>('');
 
   // Form state
   const [hours, setHours] = useState('');
@@ -52,7 +53,15 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    if (!isLoaded) return;
+    const initializeParams = async () => {
+      const resolvedParams = await params;
+      setTaskId(resolvedParams.id);
+    };
+    initializeParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!isLoaded || !taskId) return;
 
     const fetchData = async () => {
       try {
@@ -70,7 +79,7 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
           throw new Error('Failed to fetch tasks');
         }
         const tasksData = await tasksResponse.json();
-        const taskToEdit = tasksData.find((t: Task) => t.id === params.id);
+        const taskToEdit = tasksData.find((t: Task) => t.id === taskId);
         
         if (!taskToEdit) {
           throw new Error('Task not found');
@@ -100,7 +109,7 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
     };
 
     fetchData();
-  }, [isLoaded, params.id, user?.id]);
+  }, [isLoaded, taskId, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,7 +134,7 @@ export default function EditTaskPage({ params }: { params: { id: string } }) {
         throw new Error('Please select a date');
       }
 
-      const response = await fetch(`/api/tasks/${params.id}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
